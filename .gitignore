@@ -166,4 +166,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,java,intellij
+# Exclude specific files
+.bin
+.lock
+file-system.probe
