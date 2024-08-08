@@ -6,7 +6,7 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -16,7 +16,7 @@ spring:
 swagger-config:
   title: VueSpringBoard API
   prefix: /api
-  url: http://localhost:9001
+  url: http://localhost:8080
 
 
 

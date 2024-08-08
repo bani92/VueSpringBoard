@@ -1,5 +1,12 @@
 package com.example.vuespringboard.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
 /**
  * class       :VueSpringBoardDto
  * Package      :com.example.vuespringboard.dto
@@ -12,5 +19,15 @@ package com.example.vuespringboard.dto;
  * ------------------------------------------------------
  * : 2024-08-07 :            : 신규 개발.
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class VueSpringBoardDto {
+    private Long id;
+    private String title;
+    private String content;
+    private String author;
+    private String createdAt;
+    private String updatedAt;
 }
