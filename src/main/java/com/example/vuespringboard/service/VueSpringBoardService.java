@@ -54,7 +54,12 @@ public class VueSpringBoardService {
      * 게시글 상세정보 조회
      */
     public VueSpringBoardDto getBoard(Long id) {
-        VueSpringBoardEntity entity = vueSpringBoardRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        VueSpringBoardEntity entity = vueSpringBoardRepository.findById(id).orElse(null);
+
+        if(entity == null) {
+            return new VueSpringBoardDto();
+        }
+
         return VueSpringBoardDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())

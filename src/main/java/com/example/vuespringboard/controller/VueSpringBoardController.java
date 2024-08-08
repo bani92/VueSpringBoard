@@ -1,10 +1,14 @@
 package com.example.vuespringboard.controller;
 
+import com.example.vuespringboard.dto.ResultDto;
 import com.example.vuespringboard.dto.VueSpringBoardDto;
 import com.example.vuespringboard.entity.VueSpringBoardEntity;
 import com.example.vuespringboard.service.VueSpringBoardService;
+import com.example.vuespringboard.utils.CommonEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +39,18 @@ public class VueSpringBoardController {
     }
 
     @GetMapping("/board/{id}")
-    public VueSpringBoardDto getBoard(@PathVariable("id") Long id) {
-        return vueSpringBoardService.getBoard(id);
+    public ResponseEntity<?> getBoard(@PathVariable("id") Long id) {
+
+        ResultDto resultDto = new ResultDto();
+        VueSpringBoardDto vueSpringBoardDto = vueSpringBoardService.getBoard(id);
+
+        if(vueSpringBoardDto.getId() == null) {
+            resultDto.setCd(CommonEnum.VIEW_FAIL.getCode());
+            resultDto.setMessage(CommonEnum.VIEW_FAIL.getDescription());
+            return new ResponseEntity<>(resultDto, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(vueSpringBoardDto, HttpStatus.OK);
     }
 
     @PostMapping("/board")
