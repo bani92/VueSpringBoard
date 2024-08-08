@@ -36,7 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .allowedMethods("*") // http method를 지정할
 //                .allowedHeaders("*")
 //                .allowCredentials(true) // 쿠키 인증 요청 허용
-//        ;
+//        ;1
 //    }
 
     @Override
