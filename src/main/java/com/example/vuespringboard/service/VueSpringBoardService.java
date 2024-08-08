@@ -4,6 +4,7 @@ import com.example.vuespringboard.dto.VueSpringBoardDto;
 import com.example.vuespringboard.entity.VueSpringBoardEntity;
 import com.example.vuespringboard.repository.VueSpringBoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * class       :VueSpringBoardService
@@ -30,24 +32,22 @@ public class VueSpringBoardService {
 
     private final VueSpringBoardRepository vueSpringBoardRepository;
 
+    private final ModelMapper modelMapper;
     /**
      * 게시글 목록 조회
      */
     public List<VueSpringBoardDto> getBoardList() {
         List<VueSpringBoardEntity> boardEntities = vueSpringBoardRepository.findAll();
-        List<VueSpringBoardDto> dtos = new ArrayList<>();
 
-        for (VueSpringBoardEntity entity : boardEntities) {
-            VueSpringBoardDto dto = VueSpringBoardDto.builder()
-                    .id(entity.getId())
-                    .title(entity.getTitle())
-                    .author(entity.getAuthor())
-                    .createdAt(entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
-                    .updatedAt(entity.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
-                    .build();
-            dtos.add(dto);
-        }
-        return dtos;
+        return boardEntities.stream()
+                .map(entity -> {
+                    VueSpringBoardDto dto = modelMapper.map(entity, VueSpringBoardDto.class);
+                    // 포맷팅 후 DTO에 값 설정
+                    dto.setCreatedAt(entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")));
+                    dto.setUpdatedAt(entity.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")));
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -59,15 +59,12 @@ public class VueSpringBoardService {
         if(entity == null) {
             return new VueSpringBoardDto();
         }
+        VueSpringBoardDto vueSpringBoardDto = modelMapper.map(entity, VueSpringBoardDto.class);
 
-        return VueSpringBoardDto.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .author(entity.getAuthor())
-                .createdAt(entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
-                .updatedAt(entity.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
-                .build();
+        vueSpringBoardDto.setCreatedAt(entity.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")));
+        vueSpringBoardDto.setUpdatedAt(entity.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")));
+
+        return vueSpringBoardDto;
     }
 
 
