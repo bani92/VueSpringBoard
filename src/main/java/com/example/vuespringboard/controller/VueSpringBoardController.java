@@ -2,7 +2,6 @@ package com.example.vuespringboard.controller;
 
 import com.example.vuespringboard.dto.ResultDto;
 import com.example.vuespringboard.dto.VueSpringBoardDto;
-import com.example.vuespringboard.entity.VueSpringBoardEntity;
 import com.example.vuespringboard.service.VueSpringBoardService;
 import com.example.vuespringboard.utils.CommonEnum;
 import lombok.RequiredArgsConstructor;
@@ -54,17 +53,33 @@ public class VueSpringBoardController {
     }
 
     @PostMapping("/board")
-    public VueSpringBoardEntity create(@RequestBody VueSpringBoardDto vueSpringBoardDto) {
-        return vueSpringBoardService.create(vueSpringBoardDto);
+    public ResponseEntity<?> create(@RequestBody VueSpringBoardDto vueSpringBoardDto) {
+
+        Long insertId = vueSpringBoardService.create(vueSpringBoardDto);
+
+        if (insertId == 0) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(vueSpringBoardService.getBoard(insertId), HttpStatus.OK);
     }
 
     @PatchMapping("/board")
-    public VueSpringBoardEntity update(@RequestBody VueSpringBoardDto vueSpringBoardDto) {
-        return vueSpringBoardService.update(vueSpringBoardDto);
+    public ResponseEntity<?> update(@RequestBody VueSpringBoardDto vueSpringBoardDto) {
+
+        Long updateId = vueSpringBoardService.update(vueSpringBoardDto);
+
+        if (updateId == 0) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(vueSpringBoardService.getBoard(updateId), HttpStatus.OK);
     }
 
     @DeleteMapping("/board/{id}")
-    public void delete(@PathVariable Long id) {
-        vueSpringBoardService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+
+        return new ResponseEntity<>(vueSpringBoardService.delete(id), HttpStatus.OK);
+
     }
 }

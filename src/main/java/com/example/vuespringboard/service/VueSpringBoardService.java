@@ -5,12 +5,11 @@ import com.example.vuespringboard.entity.VueSpringBoardEntity;
 import com.example.vuespringboard.repository.VueSpringBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +35,7 @@ public class VueSpringBoardService {
     /**
      * 게시글 목록 조회
      */
+    @Transactional(readOnly = true)
     public List<VueSpringBoardDto> getBoardList() {
         List<VueSpringBoardEntity> boardEntities = vueSpringBoardRepository.findAll();
 
@@ -53,6 +53,7 @@ public class VueSpringBoardService {
     /**
      * 게시글 상세정보 조회
      */
+    @Transactional(readOnly = true)
     public VueSpringBoardDto getBoard(Long id) {
         VueSpringBoardEntity entity = vueSpringBoardRepository.findById(id).orElse(null);
 
@@ -71,34 +72,54 @@ public class VueSpringBoardService {
     /**
      * 게시글 등록
      */
-    public VueSpringBoardEntity create(VueSpringBoardDto vueSpringBoardDto) {
-        VueSpringBoardEntity entity = VueSpringBoardEntity.builder()
-                .title(vueSpringBoardDto.getTitle())
-                .content(vueSpringBoardDto.getContent())
-                .author(vueSpringBoardDto.getAuthor())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        return vueSpringBoardRepository.save(entity);
+    @Transactional
+    public Long create(VueSpringBoardDto vueSpringBoardDto) {
+
+        if (vueSpringBoardDto == null) {
+            return 0L;
+        }
+
+        VueSpringBoardEntity entity = modelMapper.map(vueSpringBoardDto, VueSpringBoardEntity.class);
+
+        entity.setCreatedAt(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now());
+
+        vueSpringBoardRepository.save(entity);
+
+        return entity.getId();
     }
 
     /**
      * 게시글 수정
      */
-    public VueSpringBoardEntity update(VueSpringBoardDto vueSpringBoardDto) {
-        VueSpringBoardEntity vueSpringBoardEntity =
-                vueSpringBoardRepository.findById(vueSpringBoardDto.getId()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        vueSpringBoardEntity.setTitle(vueSpringBoardDto.getTitle());
-        vueSpringBoardEntity.setContent(vueSpringBoardEntity.getContent());
-        vueSpringBoardEntity.setUpdatedAt(LocalDateTime.now());
-        return vueSpringBoardEntity;
+    @Transactional
+    public Long update(VueSpringBoardDto vueSpringBoardDto) {
+
+        if (vueSpringBoardDto == null || vueSpringBoardDto.getId() == null) {
+            return 0L;
+        }
+
+
+        VueSpringBoardEntity entity = modelMapper.map(vueSpringBoardDto, VueSpringBoardEntity.class);
+
+        entity.setUpdatedAt(LocalDateTime.now());
+
+        vueSpringBoardRepository.save(entity);
+
+        return entity.getId();
     }
 
     /**
      * 게시글 삭제
      */
-    public void delete(Long id) {
-        VueSpringBoardEntity entity = vueSpringBoardRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        vueSpringBoardRepository.delete(entity);
+    @Transactional
+    public boolean delete(Long id) {
+
+        if (vueSpringBoardRepository.existsById(id)) {
+            vueSpringBoardRepository.deleteById(id);
+            return true;
+        }
+        return false;
+
     }
 }
