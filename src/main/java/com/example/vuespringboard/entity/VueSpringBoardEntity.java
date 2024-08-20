@@ -41,9 +41,9 @@ public class VueSpringBoardEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET UTF8")
     private String author;
 
-    @Column(name = "created_at")
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column
     private LocalDateTime updatedAt;
 }

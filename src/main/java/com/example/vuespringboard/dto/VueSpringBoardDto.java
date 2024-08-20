@@ -28,6 +28,6 @@ public class VueSpringBoardDto {
     private String title;
     private String content;
     private String author;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
